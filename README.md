@@ -17,20 +17,23 @@
 |**Enable TypeScript**<br>False|
 |**Add Eslint configuration**<br>False|
 
-## etiquetas
+# Etiquetas - Gestión de Etiquetas Estándar (SAPUI5 App)
+## Descripción
+**Etiquetas** es una aplicación web responsive desarrollada con **SAPUI5** para la gestión rápida y eficiente de etiquetas estándar en entornos logísticos o de producción. Permite operaciones clave como reimpresión, partición y unificación de etiquetas  mediante integración con un servicio OData.
 
-ZMMFA_LABEL_ID
+Cada acción genera un PDF en base64 que se abre automáticamente en una nueva pestaña, facilitando el flujo de trabajo para operadores de almacén. La app es single-page, con interfaz intuitiva (pestañas y formularios simples) y validaciones en tiempo real.
 
-### Starting the generated app
+### Funcionalidades Principales
+- **Reimpresión**: Imprime una etiqueta existente por folio.
+- **Partición**: Divide una etiqueta en dos por cantidades específicas (mín. 1 cada una).
+- **Unificación**: Une dos etiquetas en una sola.
 
--   This app has been generated using the SAP Fiori tools - App Generator, as part of the SAP Fiori tools suite.  To launch the generated application, run the following from the generated application root folder:
+### Tecnologías
+- **Frontend**: SAPUI5 (XML Views, Controllers JS, i18n para multilingüe).
+- **Backend**: Servicio OData v2 
+- **Despliegue**: Preparada para SAP BTP (Fiori Launchpad) o on-premise.
+- **Pruebas**: Mock local con JSON para desarrollo offline.
 
-```
-    npm start
-```
 
-#### Pre-requisites:
-
-1. Active NodeJS LTS (Long Term Support) version and associated supported NPM version.  (See https://nodejs.org)
 
 
