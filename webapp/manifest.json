@@ -15,7 +15,7 @@
       "version": "1.19.3",
       "toolsId": "f34ed829-7958-4312-a231-7e1ed2b5ac1f"
     },
-     "dataSources": {
+    "dataSources": {
       "ZSB_STANDARD_LABELS_VAN": {
         "uri": "/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Annotations(TechnicalName='ZSB_STANDARD_LABELS_VAN',Version='0001')/$value/",
         "type": "ODataAnnotation",
@@ -95,23 +95,33 @@
         "transition": "slide",
         "type": "View",
         "viewType": "XML",
-        "path": "logaligroup.etiquetas.view",
-        "async": true,
-        "viewPath": "logaligroup.etiquetas.view"
+        "viewPath": "logaligroup.etiquetas.view",  
+        "async": true
       },
       "routes": [
         {
           "name": "RouteMain",
-          "pattern": ":?query:",
-          "target": [
-            "TargetMain"
-          ]
+          "pattern": "",  
+          "target": "TargetMain" 
+        },
+        {
+          "name": "RouteDetail",
+          "pattern": "detail/{folio}",
+          "target": "TargetDetail"  
         }
       ],
       "targets": {
         "TargetMain": {
           "id": "Main",
-          "name": "Main"
+          "name": "Main",
+          "viewName": "Main",  
+          "viewLevel": 1
+        },
+        "TargetDetail": {
+          "id": "Detail",
+          "name": "Detail",
+          "viewName": "Detail",
+          "viewLevel": 2
         }
       }
     },

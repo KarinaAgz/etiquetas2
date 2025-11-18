@@ -1,49 +1,55 @@
-<mvc:XMLView id="_IDGenXMLView"
+<mvc:View
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
     xmlns:tnt="sap.tnt"
-    xmlns:table="sap.ui.table"
     xmlns:layout="sap.ui.layout"
     controllerName="logaligroup.etiquetas.controller.Detail"
+    displayBlock="true"  
 >
     <tnt:ToolHeader id="_IDGenToolHeader">
-        <Button id="_IDGenButton4"
+        <Button
+            id="_IDGenButton4"
             text="{i18n>detailview.regresa}"
             press="goBackBtn"
+            icon="sap-icon://nav-back"  
         />
         <ToolbarSpacer id="_IDGenToolbarSpacer" />
-
         <Title
             titleStyle="H4"
-            text="{i18n>title}"
+            text="{i18n>titleDetail}"  
             class="sapUiSmallMargin"
             id="titleText"
         />
         <ToolbarSpacer id="_IDGenToolbarSpacer1" />
     </tnt:ToolHeader>
 
-    <ObjectHeader id="_IDGenObjectHeader" title="Detalle del Folio: {basculaDetails>/Folio}">
+    <ObjectHeader
+        id="_IDGenObjectHeader"
+        title="Detalle del Folio: {basculaDetails>/Folio}"
+        responsive="true"  
+        class="sapUiResponsiveMargin"
+    >
         <attributes>
-            <ObjectAttribute id="_IDGenObjectAttribute" text="Tipo ticket :{basculaDetails>/Tipoticket}" />
-            <ObjectAttribute id="_IDGenObjectAttribute1" text="Centro Entrada:{basculaDetails>/CentroEnt}"/>
-            <ObjectAttribute id="_IDGenObjectAttribute2" text="Centro Salida:{basculaDetails>/CentroSal}"/>
-            <ObjectAttribute id="_IDGenObjectAttribute3" text="Material: {basculaDetails>/Material}"/>
-            <ObjectAttribute id="_IDGenObjectAttribute4" text="Báscula entrada: {basculaDetails>/BasculaEnt}"/>
-            <ObjectAttribute id="_IDGenObjectAttribute5" text="Báscula salida: {basculaDetails>/BasculaSal}"/>
-            <ObjectAttribute id="_IDGenObjectAttribute6" text="FechaRegBas: {basculaDetails>/FechaRegBas}"/>
-            <ObjectAttribute id="_IDGenObjectAttribute19" text="FechaEntBas: {basculaDetails>/FechaEntBas}"/>
-            <ObjectAttribute id="_IDGenObjectAttribute7" text="FechaSalBas: {basculaDetails/FechaSalBas}"/>
-            <ObjectAttribute id="_IDGenObjectAttribute8" text="Conductor: {basculaDetails>/Conductor}"/>
-            <ObjectAttribute id="_IDGenObjectAttribute9" text="Pesaje: {basculaDetails>/Pesaje}"/>
-            <ObjectAttribute id="_IDGenObjectAttribute10" text="Proceso: {basculaDetails>/Proceso}"/>
-            <ObjectAttribute id="_IDGenObjectAttribute11" text="Numero Doc.: {basculaDetails>/NumeroDoc}"/>
-            <ObjectAttribute id="_IDGenObjectAttribute12" text="Pesaje2: {basculaDetails>/Pesaje2}"/>
-            <ObjectAttribute id="_IDGenObjectAttribute13" text="Peso Neto: {basculaDetails>/PesoNeto}"/>
-            <ObjectAttribute id="_IDGenObjectAttribute14" text="Peso Teórico: {basculaDetails>/PesoTeorico}"/>
-            <ObjectAttribute id="_IDGenObjectAttribute15" text="Diferencia: {basculaDetails>/Diferencia}"/>
-            <ObjectAttribute id="_IDGenObjectAttribute16" text="Valor: {basculaDetails>/Valor}"></ObjectAttribute>
-            <ObjectAttribute id="_IDGenObjectAttribute17" text="RegIncompleto: {basculaDetails>/RegUncompleto}"></ObjectAttribute>
-            <ObjectAttribute id="_IDGenObjectAttribute18" text="Mensaje: {basculaDetails>/Mensaje}"></ObjectAttribute>
+            <ObjectAttribute id="_IDGenObjectAttribute1" text="Tipo ticket: {basculaDetails>/Tipoticket}" />
+            <ObjectAttribute id="_IDGenObjectAttribute2" text="Centro Entrada: {basculaDetails>/CentroEnt}" />
+            <ObjectAttribute id="_IDGenObjectAttribute3" text="Centro Salida: {basculaDetails>/CentroSal}" />
+            <ObjectAttribute id="_IDGenObjectAttribute4" text="Material: {basculaDetails>/Material}" />
+            <ObjectAttribute id="_IDGenObjectAttribute5" text="Báscula entrada: {basculaDetails>/BasculaEnt}" />
+            <ObjectAttribute id="_IDGenObjectAttribute6" text="Báscula salida: {basculaDetails>/BasculaSal}" />
+            <ObjectAttribute id="_IDGenObjectAttribute7" text="Fecha Reg. Bas: {basculaDetails>/FechaRegBas}" />
+            <ObjectAttribute id="_IDGenObjectAttribute8" text="Fecha Ent. Bas: {basculaDetails>/FechaEntBas}" />
+            <ObjectAttribute id="_IDGenObjectAttribute9" text="Fecha Sal. Bas: {basculaDetails>/FechaSalBas}" />  
+            <ObjectAttribute id="_IDGenObjectAttribute10" text="Conductor: {basculaDetails>/Conductor}" />
+            <ObjectAttribute id="_IDGenObjectAttribute11" text="Pesaje: {basculaDetails>/Pesaje}" />
+            <ObjectAttribute id="_IDGenObjectAttribute12" text="Proceso: {basculaDetails>/Proceso}" />
+            <ObjectAttribute id="_IDGenObjectAttribute13" text="Número Doc.: {basculaDetails>/NumeroDoc}" />
+            <ObjectAttribute id="_IDGenObjectAttribute14" text="Pesaje 2: {basculaDetails>/Pesaje2}" />
+            <ObjectAttribute id="_IDGenObjectAttribute15" text="Peso Neto: {basculaDetails>/PesoNeto}" />
+            <ObjectAttribute id="_IDGenObjectAttribute16" text="Peso Teórico: {basculaDetails>/PesoTeorico}" />
+            <ObjectAttribute id="_IDGenObjectAttribute17" text="Diferencia: {basculaDetails>/Diferencia}" />
+            <ObjectAttribute id="_IDGenObjectAttribute18" text="Valor: {basculaDetails>/Valor}" />
+            <ObjectAttribute id="_IDGenObjectAttribute19" text="Reg. Incompleto: {basculaDetails>/RegIncompleto}" />  
+            <ObjectAttribute id="_IDGenObjectAttribute20" text="Mensaje: {basculaDetails>/Mensaje}" />
         </attributes>
     </ObjectHeader>
-</mvc:XMLView>
+</mvc:View>
