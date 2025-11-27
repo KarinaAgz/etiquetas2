@@ -142,6 +142,22 @@
 <Property Name="FIELD_VALUE" Type="Edm.String" Nullable="false" MaxLength="10"/>
 <Property Name="DESCRIPTION" Type="Edm.String"/>
 </EntityType>
+<!-- FunctionImports simulados para la app -->
+<FunctionImport Name="PDFStReimpresion" HttpMethod="GET">
+  <Parameter Name="handunit" Type="Edm.String" Mode="In"/>
+  <ReturnType Type="cds_zsd_standard_labels.PDFStandard"/>
+</FunctionImport>
+<FunctionImport Name="PDFStParticion" HttpMethod="GET">
+  <Parameter Name="handunit" Type="Edm.String" Mode="In"/>
+  <Parameter Name="quan1" Type="Edm.String" Mode="In"/>
+  <Parameter Name="quant2" Type="Edm.String" Mode="In"/>
+  <ReturnType Type="cds_zsd_standard_labels.PDFStandard"/>
+</FunctionImport>
+<FunctionImport Name="PDFStUnificacion" HttpMethod="GET">
+  <Parameter Name="handunit1" Type="Edm.String" Mode="In"/>
+  <Parameter Name="handunit2" Type="Edm.String" Mode="In"/>
+  <ReturnType Type="cds_zsd_standard_labels.PDFStandard"/>
+</FunctionImport>
 <ComplexType Name="SAP__FitToPage">
 <Property Name="ErrorRecoveryBehavior" Type="Edm.String" Nullable="false" MaxLength="8" sap:label="Error behavior" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
 <Property Name="IsEnabled" Type="Edm.Boolean" Nullable="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
