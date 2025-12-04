@@ -14,6 +14,7 @@
     >
         <content>
             <VBox
+                id="_IDGenVBox1"
                 class="sapUiResponsiveContentPadding"
                 height="100%"
                 fitContainer="true"
@@ -27,7 +28,6 @@
                     width="100%"
                 >
                     <items>
-                        <!-- Tab 1: Reimpresión -->
                         <IconTabFilter
                             id="_IDGenIconTabFilter"
                             text="{i18n>tabReimpresion}"
@@ -36,6 +36,7 @@
                             design="Horizontal"
                         >
                             <VBox
+                                id="_IDGenVBox2"
                                 alignItems="Center"
                                 width="80%"
                                 height="100%"
@@ -45,53 +46,103 @@
                                     id="_IDGenSimpleForm"
                                     editable="true"
                                     layout="ResponsiveGridLayout"
-                                    labelSpanXL="4"
+                                    labelSpanXL="3"
                                     labelSpanL="3"
                                     labelSpanM="5"
                                     labelSpanS="12"
-                                    emptySpanXL="4"
+                                    emptySpanXL="0"
                                     emptySpanL="5"
                                     emptySpanM="3"
                                     emptySpanS="0"
-                                    columnsXL="2"
-                                    columnsL="2"
+                                    columnsXL="1"
+                                    columnsL="1"
                                     columnsM="1"
                                     maxContainerCols="2"
                                     class="sapUiSmallMargin sapUiResponsiveForm"
                                     width="100%"
                                 >
                                     <form:content>
+                                        <!-- Nueva Checkbox para modo Selectiva -->
+                                        <CheckBox
+                                            id="chkModoSelectivo"
+                                            text="{i18n>labelModoSelectivo}"
+                                            selected="{view>/modoSelectivo}"
+                                            select="onCheckboxChange"
+                                            class="sapUiSmallMarginTop"
+                                        />
+                                        
+                                        <!-- Inputs Folio: Visible solo si NO selectiva -->
                                         <Label
                                             id="_IDGenLabel"
                                             text="{i18n>labelFolio}"
                                             labelFor="reimpFolio"
                                             design="Bold"
                                             required="true"
+                                            visible="{=${view>/modoSelectivo} === false}"
                                         />
                                         <Input
                                             id="reimpFolio"
                                             maxLength="11"
                                             placeholder="{i18n>phFolio11}"
-                                            width="auto"
+                                            width="100%"
                                             type="Number"
                                             valueState="None"
                                             liveChange="onInputChange"
+                                            visible="{=${view>/modoSelectivo} === false}"
+                                        />
+                                        
+                                        <!-- Input Folio Final: Visible solo si NO selectiva -->
+                                        <Label
+                                            id="newLabelFolioFinal"
+                                            text="{i18n>labelFolioFinal}"
+                                            labelFor="reimpFolioFinal"
+                                            design="Bold"
+                                            required="false"
+                                            visible="{=${view>/modoSelectivo} === false}"
+                                        />
+                                        <Input
+                                            id="reimpFolioFinal"
+                                            maxLength="11"
+                                            placeholder="{i18n>phFolioFinal}"
+                                            width="100%"
+                                            type="Number"
+                                            valueState="None"
+                                            liveChange="onInputChange"
+                                            visible="{=${view>/modoSelectivo} === false}"
+                                        />
+                                        
+                                        <!-- TextArea para Lista: Visible solo si selectiva -->
+                                        <Label
+                                            id="labelListaHUs"
+                                            text="{i18n>labelListaHUs}"
+                                            labelFor="txtListaHUs"
+                                            design="Bold"
+                                            visible="{=${view>/modoSelectivo} === true}"
+                                        />
+                                        <TextArea
+                                            id="txtListaHUs"
+                                            placeholder="{i18n>phListaHUs}"
+                                            width="100%"
+                                            rows="5"
+                                            maxLength="2000"
+                                            valueState="None"
+                                            liveChange="onInputChange"
+                                            visible="{=${view>/modoSelectivo} === true}"
                                         />
                                     </form:content>
                                     <Button
                                         id="_IDGenButton1"
                                         text="{i18n>btnReimprimir}"
                                         press="onReimprimir"
-                                        class="sapUiResponsiveMargin"
+                                        class="sapUiResponsiveMargin sapUiTinyMarginTop"
                                         type="Emphasized"
                                         busyIndicatorDelay="0"
                                         tooltip="{i18n>tooltipReimprimir}"
-                                        width="75%"
+                                        width="100%"
                                     />
                                 </form:SimpleForm>
                             </VBox>
                         </IconTabFilter>
-
                         <!-- Tab 2: Partición -->
                         <IconTabFilter
                             id="_IDGenIconTabFilter1"
@@ -102,6 +153,7 @@
                         >
                             <!-- Form centrado -->
                             <VBox
+                                id="_IDGenVBox3"
                                 alignItems="Center"
                                 width="80%"
                                 height="100%"
@@ -202,6 +254,7 @@
                             design="Horizontal"
                         >
                             <VBox
+                                id="_IDGenVBox4"
                                 alignItems="Center"
                                 width="80%"
                                 class="sapUiSmallMargin"
