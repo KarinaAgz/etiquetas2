@@ -9,250 +9,224 @@ sap.ui.define([
     return BaseController.extend("logaligroup.etiquetas.controller.Main", {
 
         onInit: function () {
-            console.log("Main inicializado");
-            // Modelo "view" con todas las propiedades del header + modo selectiva
             this.getView().setModel(new sap.ui.model.json.JSONModel({
                 modoSelectivo: false,
-                printer: "pdf",      // Valor por defecto: PDF
-                logo: true           // Valor por defecto: con logo
+                modoMasivo: false,
+                printer: "pdf",
+                logo: true,
+                cantidadHUs: 0,
+                werks: "1000",
+                lgort: "W500"
             }), "view");
         },
 
-        // === HEADER: Selector de impresora ===
         onImpresoraChange: function (oEvent) {
-            var sKey = oEvent.getParameter("selectedItem").getKey();
-            this.getView().getModel("view").setProperty("/printer", sKey);
+            this.getView().getModel("view").setProperty("/printer", oEvent.getParameter("selectedItem").getKey());
         },
 
-        // === HEADER: Checkbox de logotipo ===
         onLogoChange: function (oEvent) {
-            var bSelected = oEvent.getParameter("selected");
-            this.getView().getModel("view").setProperty("/logo", bSelected);
+            this.getView().getModel("view").setProperty("/logo", oEvent.getParameter("selected"));
         },
 
-        // === CHECKBOX MODO SELECTIVA ===
-        onCheckboxChange: function (oEvent) {
-            var bSelected = oEvent.getParameter("selected");
-            var oView = this.getView();
-            var oViewModel = oView.getModel("view");
-            oViewModel.setProperty("/modoSelectivo", bSelected);
-
-            if (bSelected) {
-                oView.byId("reimpFolio").setValue("");
-                oView.byId("reimpFolioFinal").setValue("");
-            } else {
-                oView.byId("txtListaHUs").setValue("");
-            }
+        onModoSelectivoChange: function (oEvent) {
+            var b = oEvent.getParameter("selected");
+            var m = this.getView().getModel("view");
+            m.setProperty("/modoSelectivo", b);
+            m.setProperty("/cantidadHUs", 0);
+            this.byId("reimpFolio")?.setValue("");
+            this.byId("reimpFolioFinal")?.setValue("");
+            this.byId("txtListaReimp")?.setValue("");
         },
 
-        // === VALIDACIÓN EN VIVO (11 dígitos estrictos) ===
+        onModoMasivoChange: function (oEvent) {
+            var b = oEvent.getParameter("selected");
+            var m = this.getView().getModel("view");
+            m.setProperty("/modoMasivo", b);
+            m.setProperty("/cantidadHUs", 0);
+            var ta = this._getCurrentTextArea();
+            if (ta) ta.setValue("");
+        },
+
+        _getCurrentTextArea: function () {
+            var key = this.byId("_IDGenIconTabBar").getSelectedKey();
+            if (key === "reimpresion") return this.byId("txtListaReimp");
+            if (key === "particion")   return this.byId("txtListaPart");
+            if (key === "unificacion") return this.byId("txtListaUnif");
+            return null;
+        },
+
         onInputChange: function (oEvent) {
-            // ... (tu código actual, déjalo exactamente igual) ...
-            var oInput = oEvent.getSource();
-            var sId = oInput.getId();
-            var sValue = oInput.getValue();
-            var oBundle = this.getResourceBundle();
-            var sNewValue = sValue.replace(/[^0-9]/g, '');
-
-            if (sId.includes("reimpFolio") || sId.includes("reimpFolioFinal")) {
-                if (sNewValue.length > 11) {
-                    sNewValue = sNewValue.substring(0, 11);
-                    oInput.setValueState("Warning");
-                    oInput.setValueStateText("Máximo 11 dígitos permitidos.");
-                } else if (sNewValue.length > 0 && (isNaN(sNewValue) || parseInt(sNewValue) <= 0)) {
-                    oInput.setValueState("Error");
-                    oInput.setValueStateText(oBundle.getText("msgInputInvalido"));
-                    sNewValue = "";
-                } else {
-                    oInput.setValueState("None");
-                }
-                oInput.setValue(sNewValue);
-            } else if (sId.includes("txtListaHUs")) {
-                var sCleanValue = sValue.replace(/\s/g, '');
-                var aHUs = sCleanValue.split(',').map(function (s) { return s.trim(); }).filter(Boolean);
-                var bValid = true;
-                var sErrorMsg = "";
-
-                for (var i = 0; i < aHUs.length; i++) {
-                    var sHU = aHUs[i].replace(/[^0-9]/g, '');
-                    if (sHU.length !== 11) {
-                        bValid = false;
-                        sErrorMsg = "Cada folio HU debe tener exactamente 11 dígitos.";
-                        break;
-                    }
-                }
-
-                if (!bValid || aHUs.length > 100) {
-                    oInput.setValueState("Error");
-                    oInput.setValueStateText(sErrorMsg || "Máximo 100 folios de 11 dígitos.");
-                } else {
-                    oInput.setValueState("None");
-                }
-            } else {
-                if (sValue && (isNaN(sValue) || parseInt(sValue) <= 0)) {
-                    oInput.setValueState("Error");
-                    oInput.setValueStateText(oBundle.getText("msgInputInvalido"));
-                } else {
-                    oInput.setValueState("None");
-                }
+            var input = oEvent.getSource();
+            input.setValue(input.getValue().replace(/[^0-9,\s\n]/g, ""));
+            if (input.getId().includes("txtLista")) {
+                this._validateListaHUs();
             }
         },
 
-        // === REIMPRESIÓN (individual, rango y selectiva) ===
-        onReimprimir: function (oEvent) {
-            var oView = this.getView();
-            var oViewModel = oView.getModel("view");
-            var bModoSelectivo = oViewModel.getProperty("/modoSelectivo");
-            var sPrinter = oViewModel.getProperty("/printer") || "pdf";
-            var bLogo = oViewModel.getProperty("/logo") === true ? "true" : "false";
-            var oButton = oEvent.getSource();
-            var oBundle = this.getResourceBundle();
+        _validateListaHUs: function () {
+            var ta = this._getCurrentTextArea();
+            if (!ta) return;
+            var arr = ta.getValue().split(/[\s,\n]+/).map(s => s.trim()).filter(Boolean);
+            var m = this.getView().getModel("view");
 
-            var oModel = this.getModel("ZSB_STANDARD_LABELS");
-            if (!oModel) {
-                MessageBox.error(oBundle.getText("msgModelNoDisponible"));
-                return;
+            if (arr.length > 100) {
+                ta.setValueState("Error").setValueStateText("Máximo 100 HUs");
+                m.setProperty("/cantidadHUs", 0);
+            } else if (arr.length === 0) {
+                ta.setValueState("None");
+                m.setProperty("/cantidadHUs", 0);
+            } else if (arr.every(h => h.length === 11 && !isNaN(h))) {
+                ta.setValueState("None");
+                m.setProperty("/cantidadHUs", arr.length);
+            } else {
+                ta.setValueState("Error").setValueStateText("Cada HU debe tener 11 dígitos");
+                m.setProperty("/cantidadHUs", 0);
             }
+        },
 
-            if (bModoSelectivo) {
-                // ----- MODO SELECTIVA -----
-                var sLista = oView.byId("txtListaHUs").getValue().trim();
-                if (!sLista) {
-                    MessageBox.warning(oBundle.getText("msgListaInvalida"));
-                    return;
-                }
-                var aHUs = sLista.split(',').map(s => s.trim()).filter(Boolean);
-                if (aHUs.length > 100 || aHUs.length === 0) {
-                    MessageBox.warning(oBundle.getText("msgListaInvalida"));
-                    return;
-                }
-                for (var i = 0; i < aHUs.length; i++) {
-                    if (isNaN(aHUs[i]) || aHUs[i].length !== 11) {
-                        MessageBox.warning(oBundle.getText("msgListaInvalida"));
-                        return;
-                    }
-                }
+        _getListaHUs: function () {
+            var ta = this._getCurrentTextArea();
+            if (!ta) return null;
+            var s = ta.getValue().trim();
+            if (!s) {
+                MessageBox.warning("La lista está vacía");
+                return null;
+            }
+            var arr = s.split(/[\s,\n]+/).map(t => t.trim()).filter(Boolean);
+            if (arr.length > 100 || arr.some(h => h.length !== 11 || isNaN(h))) {
+                MessageBox.warning("Lista inválida o supera 100 HUs");
+                return null;
+            }
+            return arr;
+        },
 
-                MessageBox.confirm(oBundle.getText("msgConteoHUs", [aHUs.length]), {
-                    onClose: function (sAction) {
-                        if (sAction === "OK") {
-                            oButton.setBusy(true);
-                            this.procesaListaSelectiva(oModel, aHUs, oButton, sPrinter, bLogo);
-                            oView.byId("txtListaHUs").setValue("");
+        onReimprimir: function (oEvent) {
+            var vm = this.getView().getModel("view");
+            var selectivo = vm.getProperty("/modoSelectivo");
+            var printer = vm.getProperty("/printer");
+            var logo = vm.getProperty("/logo");
+            var btn = oEvent.getSource();
+
+            if (selectivo) {
+                var lista = this._getListaHUs();
+                if (!lista) return;
+
+                MessageBox.confirm(`Se imprimirán ${lista.length} etiqueta(s). ¿Continuar?`, {
+                    title: "Confirmar impresión",
+                    onClose: function (action) {
+                        if (action === MessageBox.Action.OK) {
+                            btn.setBusy(true);
+                            this._imprimirLista(this.getModel("ZSB_STANDARD_LABELS"), lista, printer, logo, btn);
                         }
                     }.bind(this)
                 });
             } else {
-                // ----- MODO INDIVIDUAL / RANGO -----
-                var sFolio1 = oView.byId("reimpFolio").getValue().trim();
-                var sFolio2 = oView.byId("reimpFolioFinal").getValue().trim();
+                var f1 = this.byId("reimpFolio").getValue().trim();
+                var f2 = this.byId("reimpFolioFinal").getValue().trim();
 
-                if (!sFolio1 || sFolio1.length !== 11) {
-                    MessageBox.warning(oBundle.getText("msgFolioInvalido"));
-                    return;
+                if (!f1 || f1.length !== 11 || isNaN(f1)) {
+                    return MessageBox.warning("Folio inicial inválido");
                 }
-                if (sFolio2 && (sFolio2.length !== 11 || parseInt(sFolio1) >= parseInt(sFolio2))) {
-                    MessageBox.warning(oBundle.getText("msgRangoInvalido"));
-                    return;
+                if (f2 && (f2.length !== 11 || isNaN(f2) || parseInt(f1) >= parseInt(f2))) {
+                    return MessageBox.warning("Rango inválido");
                 }
 
-                var sHandunit2 = sFolio2 || '';
-                var oUrl = "/PDFStandard(handunit='" + sFolio1 + "',handunit2='" + sHandunit2 +
-                           "',printer='" + sPrinter + "',logo='" + bLogo + "')";
+                var cant = f2 ? parseInt(f2) - parseInt(f1) + 1 : 1;
 
-                oButton.setBusy(true);
-                this.sendRequest(oModel, oUrl);
-                oButton.setBusy(false);
-
-                oView.byId("reimpFolio").setValue("");
-                oView.byId("reimpFolioFinal").setValue("");
+                this._validateHU(f1, () => {
+                    if (f2) {
+                        this._validateHU(f2, () => this._confirmarImpresion(f1, f2, cant, printer, logo, btn),
+                                         (msg) => MessageBox.error(msg));
+                    } else {
+                        this._confirmarImpresion(f1, "", cant, printer, logo, btn);
+                    }
+                }, (msg) => MessageBox.error(msg));
             }
         },
 
-        // === PROCESAMIENTO SELECTIVA (con printer y logo) ===
-        procesaListaSelectiva: function (oModel, aHUs, oButton, sPrinter, bLogo) {
+        _confirmarImpresion: function (f1, f2, cant, printer, logo, btn) {
+            MessageBox.confirm(`Se imprimirán ${cant} etiqueta(s). ¿Continuar?`, {
+                title: "Confirmar impresión",
+                onClose: (a) => {
+                    if (a === "OK") {
+                        btn.setBusy(true);
+                        var url = `/PDFStandard(handunit='${f1}',handunit2='${f2}',printer='${printer}',logo='${logo}')`;
+                        this.sendRequest(this.getModel("ZSB_STANDARD_LABELS"), url);
+                        btn.setBusy(false);
+                        this.byId("reimpFolio").setValue("");
+                        this.byId("reimpFolioFinal").setValue("");
+                    }
+                }
+            });
+        },
+
+        _validateHU: function (sHU, fnSuccess, fnError) {
+            var oModel = this.getModel("ZSB_STANDARD_LABELS");
+            var sPath = `/CheckHUExists(handunit='${sHU}')`;
+
+            oModel.read(sPath, {
+                success: (oData) => {
+                    if (oData?.Active === "X") fnSuccess();
+                    else fnError(`HU ${sHU} no existe o no está activa`);
+                },
+                error: () => fnError("Error de conexión al validar HU")
+            });
+        },
+
+        _imprimirLista: function (oModel, aHUs, printer, logo, btn) {
             var i = 0;
             var that = this;
-            function callNext() {
+            (function next() {
                 if (i >= aHUs.length) {
-                    oButton.setBusy(false);
-                    MessageToast.show("Procesamiento selectivo completado: " + aHUs.length + " etiquetas.");
+                    btn.setBusy(false);
+                    MessageToast.show(`Impresión completada: ${aHUs.length} etiquetas`);
                     return;
                 }
-                var sHU = aHUs[i];
-                var oUrl = "/PDFStandard(handunit='" + sHU + "',handunit2='',printer='" + sPrinter + "',logo='" + bLogo + "')";
-
-                oModel.read(oUrl, {
-                    success: function (oData) {
-                        that.openPdfFromBase64(oData.Pdfbase64);
-                        i++;
-                        callNext();
-                    },
-                    error: function (oError) {
-                        console.error("Error en HU " + sHU, oError);
-                        i++;
-                        callNext();
-                    }
+                var url = `/PDFStandard(handunit='${aHUs[i++]}',handunit2='',printer='${printer}',logo='${logo}')`;
+                oModel.read(url, {
+                    success: d => that.openPdfFromBase64(d.Pdfbase64 || d.PdfBase64),
+                    error: () => {}
                 });
-            }
-            callNext();
+                setTimeout(next, 300);
+            })();
         },
 
-        // === PARTICIÓN Y UNIFICACIÓN (también con printer/logo) ===
         onParticionar: function (oEvent) {
-            var oView = this.getView();
-            var oViewModel = oView.getModel("view");
-            var sPrinter = oViewModel.getProperty("/printer") || "pdf";
-            var bLogo = oViewModel.getProperty("/logo") === true ? "true" : "false";
-
-            var sFolio = oView.byId("partFolio").getValue().trim();
-            var sCant1 = oView.byId("cant1").getValue().trim();
-            var sCant2 = oView.byId("cant2").getValue().trim();
-            var oButton = oEvent.getSource();
-
-            if (!sFolio || !sCant1 || !sCant2 || isNaN(sFolio) || isNaN(sCant1) || isNaN(sCant2) || parseInt(sCant1) <= 0 || parseInt(sCant2) <= 0) {
-                MessageBox.warning(this.getResourceBundle().getText("msgParticionarInvalido"));
+            if (this.getView().getModel("view").getProperty("/modoMasivo")) {
+                MessageBox.information("Partición masiva: próximamente");
                 return;
             }
-
-            var oModel = this.getModel("ZSB_STANDARD_LABELS");
-            var oUrl = "/PDFStParticion(handunit='" + sFolio + "',quan1='" + sCant1 + "',quant2='" + sCant2 +
-                       "',printer='" + sPrinter + "',logo='" + bLogo + "')";
-
-            oButton.setBusy(true);
-            this.sendRequest(oModel, oUrl);
-            oButton.setBusy(false);
-
-            oView.byId("partFolio").setValue("");
-            oView.byId("cant1").setValue("");
-            oView.byId("cant2").setValue("");
+            var f = this.byId("partFolio")?.getValue().trim();
+            var c1 = this.byId("cant1")?.getValue();
+            var c2 = this.byId("cant2")?.getValue();
+            if (!f || f.length !== 11 || !c1 || !c2 || c1 <= 0 || c2 <= 0) {
+                return MessageBox.warning("Complete todos los campos correctamente");
+            }
+            var url = `/PDFStParticion(handunit='${f}',quan1='${c1}',quan2='${c2}',printer='${this.getView().getModel("view").getProperty("/printer")}',logo='${this.getView().getModel("view").getProperty("/logo")}')`;
+            oEvent.getSource().setBusy(true);
+            this.sendRequest(this.getModel("ZSB_STANDARD_LABELS"), url);
+            oEvent.getSource().setBusy(false);
+            this.byId("partFolio").setValue("");
+            this.byId("cant1").setValue("");
+            this.byId("cant2").setValue("");
         },
 
         onUnificar: function (oEvent) {
-            var oView = this.getView();
-            var oViewModel = oView.getModel("view");
-            var sPrinter = oViewModel.getProperty("/printer") || "pdf";
-            var bLogo = oViewModel.getProperty("/logo") === true ? "true" : "false";
-
-            var sFolio1 = oView.byId("uniFolio1").getValue().trim();
-            var sFolio2 = oView.byId("uniFolio2").getValue().trim();
-            var oButton = oEvent.getSource();
-
-            if (!sFolio1 || !sFolio2 || isNaN(sFolio1) || isNaN(sFolio2) || sFolio1 === sFolio2) {
-                MessageBox.warning(this.getResourceBundle().getText("msgUnificarInvalido"));
+            if (this.getView().getModel("view").getProperty("/modoMasivo")) {
+                MessageBox.information("Unificación masiva: próximamente");
                 return;
             }
-
-            var oModel = this.getModel("ZSB_STANDARD_LABELS");
-            var oUrl = "/PDFStUnificacion(handunit1='" + sFolio1 + "',handunit2='" + sFolio2 +
-                       "',printer='" + sPrinter + "',logo='" + bLogo + "')";
-
-            oButton.setBusy(true);
-            this.sendRequest(oModel, oUrl);
-            oButton.setBusy(false);
-
-            oView.byId("uniFolio1").setValue("");
-            oView.byId("uniFolio2").setValue("");
+            var f1 = this.byId("uniFolio1")?.getValue().trim();
+            var f2 = this.byId("uniFolio2")?.getValue().trim();
+            if (!f1 || !f2 || f1.length !== 11 || f2.length !== 11 || f1 === f2) {
+                return MessageBox.warning("Folios inválidos o iguales");
+            }
+            var url = `/PDFStUnificacion(handunit1='${f1}',handunit2='${f2}',printer='${this.getView().getModel("view").getProperty("/printer")}',logo='${this.getView().getModel("view").getProperty("/logo")}')`;
+            oEvent.getSource().setBusy(true);
+            this.sendRequest(this.getModel("ZSB_STANDARD_LABELS"), url);
+            oEvent.getSource().setBusy(false);
+            this.byId("uniFolio1").setValue("");
+            this.byId("uniFolio2").setValue("");
         }
     });
 });
