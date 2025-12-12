@@ -50,7 +50,7 @@ sap.ui.define([
         _getCurrentTextArea: function () {
             var key = this.byId("_IDGenIconTabBar").getSelectedKey();
             if (key === "reimpresion") return this.byId("txtListaReimp");
-            if (key === "particion")   return this.byId("txtListaPart");
+            if (key === "particion") return this.byId("txtListaPart");
             if (key === "unificacion") return this.byId("txtListaUnif");
             return null;
         },
@@ -133,44 +133,20 @@ sap.ui.define([
 
                 var cant = f2 ? parseInt(f2) - parseInt(f1) + 1 : 1;
 
-                this._validateHU(f1, () => {
-                    if (f2) {
-                        this._validateHU(f2, () => this._confirmarImpresion(f1, f2, cant, printer, logo, btn),
-                                         (msg) => MessageBox.error(msg));
-                    } else {
-                        this._confirmarImpresion(f1, "", cant, printer, logo, btn);
+                MessageBox.confirm(`Se imprimirán ${cant} etiqueta(s). ¿Continuar?`, {
+                    title: "Confirmar impresión",
+                    onClose: (a) => {
+                        if (a === "OK") {
+                            btn.setBusy(true);
+                            var url = `/PDFStandard(handunit='${f1}',handunit2='${f2||''}',printer='${printer}',logo='${logo}')`;
+                            this.sendRequest(this.getModel("ZSB_STANDARD_LABELS"), url);
+                            btn.setBusy(false);
+                            this.byId("reimpFolio").setValue("");
+                            this.byId("reimpFolioFinal").setValue("");
+                        }
                     }
-                }, (msg) => MessageBox.error(msg));
+                });
             }
-        },
-
-        _confirmarImpresion: function (f1, f2, cant, printer, logo, btn) {
-            MessageBox.confirm(`Se imprimirán ${cant} etiqueta(s). ¿Continuar?`, {
-                title: "Confirmar impresión",
-                onClose: (a) => {
-                    if (a === "OK") {
-                        btn.setBusy(true);
-                        var url = `/PDFStandard(handunit='${f1}',handunit2='${f2}',printer='${printer}',logo='${logo}')`;
-                        this.sendRequest(this.getModel("ZSB_STANDARD_LABELS"), url);
-                        btn.setBusy(false);
-                        this.byId("reimpFolio").setValue("");
-                        this.byId("reimpFolioFinal").setValue("");
-                    }
-                }
-            });
-        },
-
-        _validateHU: function (sHU, fnSuccess, fnError) {
-            var oModel = this.getModel("ZSB_STANDARD_LABELS");
-            var sPath = `/CheckHUExists(handunit='${sHU}')`;
-
-            oModel.read(sPath, {
-                success: (oData) => {
-                    if (oData?.Active === "X") fnSuccess();
-                    else fnError(`HU ${sHU} no existe o no está activa`);
-                },
-                error: () => fnError("Error de conexión al validar HU")
-            });
         },
 
         _imprimirLista: function (oModel, aHUs, printer, logo, btn) {
@@ -192,10 +168,22 @@ sap.ui.define([
         },
 
         onParticionar: function (oEvent) {
-            if (this.getView().getModel("view").getProperty("/modoMasivo")) {
-                MessageBox.information("Partición masiva: próximamente");
+            var modoMasivo = this.getView().getModel("view").getProperty("/modoMasivo");
+
+            if (modoMasivo) {
+                var lista = this._getListaHUs();
+                if (!lista || lista.length === 0) return;
+                MessageBox.confirm(`¿Particionar ${lista.length} HU(s) en dos partes cada una?`, {
+                    title: "Confirmar partición masiva",
+                    onClose: (a) => {
+                        if (a === "OK") {
+                            MessageBox.success(`Partición masiva enviada: ${lista.length} HUs\n(Backend pendiente)`);
+                        }
+                    }
+                });
                 return;
             }
+
             var f = this.byId("partFolio")?.getValue().trim();
             var c1 = this.byId("cant1")?.getValue();
             var c2 = this.byId("cant2")?.getValue();
@@ -212,10 +200,24 @@ sap.ui.define([
         },
 
         onUnificar: function (oEvent) {
-            if (this.getView().getModel("view").getProperty("/modoMasivo")) {
-                MessageBox.information("Unificación masiva: próximamente");
+            var modoMasivo = this.getView().getModel("view").getProperty("/modoMasivo");
+
+            if (modoMasivo) {
+                var lista = this._getListaHUs();
+                if (!lista || lista.length < 2) {
+                    return MessageBox.warning("Se requieren al menos 2 HUs para unificar");
+                }
+                MessageBox.confirm(`¿Unificar ${lista.length} HU(s) en una sola?`, {
+                    title: "Confirmar unificación masiva",
+                    onClose: (a) => {
+                        if (a === "OK") {
+                            MessageBox.success(`Unificación masiva enviada: ${lista.length} HUs → 1 HU\n(Backend pendiente)`);
+                        }
+                    }
+                });
                 return;
             }
+
             var f1 = this.byId("uniFolio1")?.getValue().trim();
             var f2 = this.byId("uniFolio2")?.getValue().trim();
             if (!f1 || !f2 || f1.length !== 11 || f2.length !== 11 || f1 === f2) {

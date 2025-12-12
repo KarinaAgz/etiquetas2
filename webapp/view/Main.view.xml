@@ -13,7 +13,7 @@
         <customHeader>
             <Bar id="_IDGenBar" class="sapUiSmallMargin">
                 <contentLeft>
-                    <Title id="_IDGenTitle" text="ZETIQUETA5" level="H5" class="sapUiTinyMarginBegin"/>
+                    <Title id="_IDGenTitle" text="ETIQUETAS" level="H5" class="sapUiTinyMarginBegin"/>
                 </contentLeft>
                 <contentMiddle>
                     <SegmentedButton id="_IDGenSegmentedButton" selectedKey="{view>/printer}" selectionChange="onImpresoraChange">
@@ -22,13 +22,17 @@
                             <SegmentedButtonItem id="_IDGenSegmentedButtonItem1" text="Zebra" key="zebra" width="70%"/>
                         </items>
                     </SegmentedButton>
-<CheckBox 
-    id="_IDGenCheckBox"
-    text="Con logotipo"
-    selected="{view>/logo}"
-    select="onLogoChange"
-    class="sapUiSmallMarginTop sapUiSmallMarginBottom"
-/>
+                    <ToolbarSeparator id="_IDGenToolbarSeparator1" />
+                    <ToolbarSeparator id="_IDGenToolbarSeparator2" />
+                    <ToolbarSeparator id="_IDGenToolbarSeparator3" />
+                    <CheckBox 
+                        id="_IDGenCheckBox"
+                        text="Con logotipo"
+                        selected="{view>/logo}"
+                        select="onLogoChange"
+                        class="sapUiSmallMarginTop sapUiSmallMarginBottom"
+                        width="100%"
+                    />
                 </contentMiddle>
                 <contentRight>
                     <VBox id="_IDGenVBox">
@@ -72,7 +76,7 @@
                                     <Button id="_IDGenButton" text="Reimprimir" type="Emphasized" press="onReimprimir" width="100%"/>
                                 </form:SimpleForm>
 
-                                <VBox id="_IDGenVBox3" visible="{view>/modoSelectivo}" alignItems="Stretch" width="100%" height="100%">
+                                <VBox id="_IDGenVBox3" visible="{view>/modoSelectivo}" alignItems="Stretch" >
                                     <TextArea id="txtListaReimp"   
                                               placeholder="Pega los folios..."
                                               width="80%"
@@ -86,7 +90,7 @@
 
                                     <Button id="_IDGenButton1" text="Reimprimir lista" type="Emphasized" press="onReimprimir" width="250px" height="50%">
                                     <layoutData>
-                                        <FlexItemData alignSelf="Center"/>
+                                        <FlexItemData id="_IDGenFlexItemData" alignSelf="Center"/>
                                     </layoutData>
                                     </Button>
                                 </VBox>
@@ -115,14 +119,14 @@
                                     <Button id="_IDGenButton2" text="Particionar HU" type="Emphasized" press="onParticionar" width="100%"/>
                                 </form:SimpleForm>
 
-                                <VBox id="_IDGenVBox5" visible="{view>/modoMasivo}" alignItems="Center">
+                                <VBox id="_IDGenVBox5" visible="{view>/modoMasivo}" alignItems="Stretch">
                                     <TextArea id="txtListaPart"   
                                               placeholder="Pega los folios a particionar..."
                                               width="80%"
                                               rows="8"
                                               growing="true"
                                               liveChange="onInputChange"/>
-                                    <Text id="_IDGenText6" text="Próximamente: partición masiva"/>
+                                    <Text text="En desarrollo - modo masivo" class="sapUiSmallMarginTop sapUiMediumFontSize" />
                                 </VBox>
                             </VBox>
                         </IconTabFilter>
@@ -147,14 +151,16 @@
                                     <Button id="_IDGenButton3" text="Unificar HUs" type="Emphasized" press="onUnificar" width="100%"/>
                                 </form:SimpleForm>
 
-                                <VBox id="_IDGenVBox7" visible="{view>/modoMasivo}" alignItems="Center">
+                                <VBox id="_IDGenVBox7" visible="{view>/modoMasivo}" alignItems="Stretch" width="100%" height="100%">
                                     <TextArea id="txtListaUnif"   
                                               placeholder="Pega los folios a unificar..."
                                               width="80%"
-                                              rows="8"
+                                              height="60%"
+                                              rows="10"
                                               growing="true"
+                                              growingMaxLines="20"
                                               liveChange="onInputChange"/>
-                                    <Text id="_IDGenText8" text="Próximamente: unificación masiva"/>
+                                    <Text text="Modo masivo disponible cuando el backend lo soporte" class="sapUiSmallMarginTop"/>
                                 </VBox>
                             </VBox>
                         </IconTabFilter>
