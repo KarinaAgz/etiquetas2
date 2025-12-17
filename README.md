@@ -35,5 +35,12 @@ Cada acción genera un PDF en base64 que se abre automáticamente en una nueva p
 - **Pruebas**: Mock local con JSON para desarrollo offline.
 
 
+<img width="1908" height="1063" alt="image" src="https://github.com/user-attachments/assets/5c8e3d85-3e6f-41b2-9023-6aa71342f8eb" />
+<img width="1919" height="1016" alt="image" src="https://github.com/user-attachments/assets/2c4d2671-ce8f-4739-893a-46b35da26ded" />
+<img width="1919" height="1072" alt="image" src="https://github.com/user-attachments/assets/1b0bc23c-a04b-461d-82f3-ec9bdf329175" />
+<img width="1909" height="1073" alt="image" src="https://github.com/user-attachments/assets/c6f3a7ae-7618-4a88-a19d-dfe55ed3d9ac" />
+
+
+
 
 
