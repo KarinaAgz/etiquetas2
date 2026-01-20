@@ -1,25 +1,19 @@
-specVersion: "3.0"
+specVersion: '3.0'
 metadata:
-  name: etiquetas.local
+  name: logaligroup.etiquetas
 type: application
 server:
   customMiddleware:
-    - name: fiori-tools-proxy
+    - name: fiori-tools-backend-proxy
       afterMiddleware: compression
       configuration:
         ignoreCertError: false
-        ui5:
-          path:
-            - /resources
-            - /test-resources
-          url: https://ui5.sap.com
-          version: 1.142.0
-        backend:
-          - path: /sap/opu/odata/sap/ZSB_STANDARD_LABELS
-            url: ./localService/mainService
-    - name: fiori-tools-appreload
-      afterMiddleware: fiori-tools-proxy
+        destinations:
+          - name: ZSB_STANDARD_LABELS
+            url: /sap/opu/odata/sap/ZSB_STANDARD_LABELS/
+            forwardAuthToken: true
+    - name: fiori-tools-preview
+      afterMiddleware: fiori-tools-backend-proxy
       configuration:
-        port: 35729
-        path: webapp
-        delay: 300
+        component: logaligroup.etiquetas
+        ui5Theme: sap_horizon

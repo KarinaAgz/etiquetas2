@@ -10,27 +10,23 @@ sap.ui.define([
 
         onInit: function () {
             console.log("Main inicializado");
-            // Modelo "view" con todas las propiedades del header + modo selectiva
             this.getView().setModel(new sap.ui.model.json.JSONModel({
                 modoSelectivo: false,
-                printer: "pdf",      // Valor por defecto: PDF
-                logo: true           // Valor por defecto: con logo
+                printer: "pdf",      // Se mantiene en el modelo pero NO se envía al backend
+                logo: true           // Se mantiene pero NO se envía
             }), "view");
         },
 
-        // === HEADER: Selector de impresora ===
         onImpresoraChange: function (oEvent) {
             var sKey = oEvent.getParameter("selectedItem").getKey();
             this.getView().getModel("view").setProperty("/printer", sKey);
         },
 
-        // === HEADER: Checkbox de logotipo ===
         onLogoChange: function (oEvent) {
             var bSelected = oEvent.getParameter("selected");
             this.getView().getModel("view").setProperty("/logo", bSelected);
         },
 
-        // === CHECKBOX MODO SELECTIVA ===
         onCheckboxChange: function (oEvent) {
             var bSelected = oEvent.getParameter("selected");
             var oView = this.getView();
@@ -45,9 +41,7 @@ sap.ui.define([
             }
         },
 
-        // === VALIDACIÓN EN VIVO (11 dígitos estrictos) ===
         onInputChange: function (oEvent) {
-            // ... (tu código actual, déjalo exactamente igual) ...
             var oInput = oEvent.getSource();
             var sId = oInput.getId();
             var sValue = oInput.getValue();
@@ -103,8 +97,6 @@ sap.ui.define([
             var oView = this.getView();
             var oViewModel = oView.getModel("view");
             var bModoSelectivo = oViewModel.getProperty("/modoSelectivo");
-            var sPrinter = oViewModel.getProperty("/printer") || "pdf";
-            var bLogo = oViewModel.getProperty("/logo") === true ? "true" : "false";
             var oButton = oEvent.getSource();
             var oBundle = this.getResourceBundle();
 
@@ -137,7 +129,7 @@ sap.ui.define([
                     onClose: function (sAction) {
                         if (sAction === "OK") {
                             oButton.setBusy(true);
-                            this.procesaListaSelectiva(oModel, aHUs, oButton, sPrinter, bLogo);
+                            this.procesaListaSelectiva(oModel, aHUs, oButton);
                             oView.byId("txtListaHUs").setValue("");
                         }
                     }.bind(this)
@@ -157,8 +149,11 @@ sap.ui.define([
                 }
 
                 var sHandunit2 = sFolio2 || '';
-                var oUrl = "/PDFStandard(handunit='" + sFolio1 + "',handunit2='" + sHandunit2 +
-                           "',printer='" + sPrinter + "',logo='" + bLogo + "')";
+
+                // CAMBIO: Igual que Erick → SOLO handunit y handunit2 (sin printer ni logo)
+                var oUrl = "/PDFStandard(handunit='" + sFolio1 + "',handunit2='" + sHandunit2 + "')";
+
+                console.log("Llamando a (individual/rango):", oUrl);
 
                 oButton.setBusy(true);
                 this.sendRequest(oModel, oUrl);
@@ -169,8 +164,8 @@ sap.ui.define([
             }
         },
 
-        // === PROCESAMIENTO SELECTIVA (con printer y logo) ===
-        procesaListaSelectiva: function (oModel, aHUs, oButton, sPrinter, bLogo) {
+        // === PROCESAMIENTO SELECTIVA (sin printer ni logo) ===
+        procesaListaSelectiva: function (oModel, aHUs, oButton) {
             var i = 0;
             var that = this;
             function callNext() {
@@ -180,7 +175,11 @@ sap.ui.define([
                     return;
                 }
                 var sHU = aHUs[i];
-                var oUrl = "/PDFStandard(handunit='" + sHU + "',handunit2='',printer='" + sPrinter + "',logo='" + bLogo + "')";
+
+                // CAMBIO: Igual que Erick → solo handunit, sin printer ni logo
+                var oUrl = "/PDFStandard(handunit='" + sHU + "',handunit2='')";
+
+                console.log("Llamando selectiva a HU " + sHU + ":", oUrl);
 
                 oModel.read(oUrl, {
                     success: function (oData) {
@@ -198,13 +197,9 @@ sap.ui.define([
             callNext();
         },
 
-        // === PARTICIÓN Y UNIFICACIÓN (también con printer/logo) ===
+        // === PARTICIÓN (sin printer ni logo) ===
         onParticionar: function (oEvent) {
             var oView = this.getView();
-            var oViewModel = oView.getModel("view");
-            var sPrinter = oViewModel.getProperty("/printer") || "pdf";
-            var bLogo = oViewModel.getProperty("/logo") === true ? "true" : "false";
-
             var sFolio = oView.byId("partFolio").getValue().trim();
             var sCant1 = oView.byId("cant1").getValue().trim();
             var sCant2 = oView.byId("cant2").getValue().trim();
@@ -216,8 +211,11 @@ sap.ui.define([
             }
 
             var oModel = this.getModel("ZSB_STANDARD_LABELS");
-            var oUrl = "/PDFStParticion(handunit='" + sFolio + "',quan1='" + sCant1 + "',quant2='" + sCant2 +
-                       "',printer='" + sPrinter + "',logo='" + bLogo + "')";
+
+            // CAMBIO: Igual que Erick → sin printer ni logo
+            var oUrl = "/PDFStParticion(handunit='" + sFolio + "',quan1='" + sCant1 + "',quan2='" + sCant2 + "')";
+
+            console.log("Llamando partición a:", oUrl);
 
             oButton.setBusy(true);
             this.sendRequest(oModel, oUrl);
@@ -228,12 +226,9 @@ sap.ui.define([
             oView.byId("cant2").setValue("");
         },
 
+        // === UNIFICACIÓN (sin printer ni logo) ===
         onUnificar: function (oEvent) {
             var oView = this.getView();
-            var oViewModel = oView.getModel("view");
-            var sPrinter = oViewModel.getProperty("/printer") || "pdf";
-            var bLogo = oViewModel.getProperty("/logo") === true ? "true" : "false";
-
             var sFolio1 = oView.byId("uniFolio1").getValue().trim();
             var sFolio2 = oView.byId("uniFolio2").getValue().trim();
             var oButton = oEvent.getSource();
@@ -244,8 +239,11 @@ sap.ui.define([
             }
 
             var oModel = this.getModel("ZSB_STANDARD_LABELS");
-            var oUrl = "/PDFStUnificacion(handunit1='" + sFolio1 + "',handunit2='" + sFolio2 +
-                       "',printer='" + sPrinter + "',logo='" + bLogo + "')";
+
+            // CAMBIO: Igual que Erick → sin printer ni logo
+            var oUrl = "/PDFStUnificacion(handunit1='" + sFolio1 + "',handunit2='" + sFolio2 + "')";
+
+            console.log("Llamando unificación a:", oUrl);
 
             oButton.setBusy(true);
             this.sendRequest(oModel, oUrl);
