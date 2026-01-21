@@ -35,9 +35,9 @@ Cada acción genera un PDF en base64 que se abre automáticamente en una nueva p
 - **Pruebas**: Mock local con JSON para desarrollo offline.
 
 <img width="1919" height="1059" alt="image" src="https://github.com/user-attachments/assets/502837d1-d7be-4f1c-9e54-f4a2348b1a16" />
-<img width="959" height="537" alt="cuprumEtiquetas5" src="https://github.com/user-attachments/assets/a8a56461-b5c5-43c7-b012-7a6b267870ab" />
-*****************************************************************************************************************************************************
--- ** por rango 
+<img width="959" height="537" alt="cuprumEtiquetas5_2" src="https://github.com/user-attachments/assets/cd37a69a-f87c-4ede-a123-a8658d28ef48" />
+
+--========================= ** Por rango ===========================
 <img width="959" height="536" alt="etiquetas5_rango" src="https://github.com/user-attachments/assets/d42749d1-f818-44c4-9222-dbb7b3cfe583" />
 
 *****************************************************************************************************************************************************
