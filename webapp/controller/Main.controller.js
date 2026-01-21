@@ -150,7 +150,7 @@ sap.ui.define([
 
                 var sHandunit2 = sFolio2 || '';
 
-                // CAMBIO: Igual que Erick → SOLO handunit y handunit2 (sin printer ni logo)
+                // CAMBIO: → SOLO handunit y handunit2 (sin printer ni logo)
                 var oUrl = "/PDFStandard(handunit='" + sFolio1 + "',handunit2='" + sHandunit2 + "')";
 
                 console.log("Llamando a (individual/rango):", oUrl);
@@ -176,7 +176,7 @@ sap.ui.define([
                 }
                 var sHU = aHUs[i];
 
-                // CAMBIO: Igual que Erick → solo handunit, sin printer ni logo
+                // CAMBIO: → solo handunit, sin printer ni logo
                 var oUrl = "/PDFStandard(handunit='" + sHU + "',handunit2='')";
 
                 console.log("Llamando selectiva a HU " + sHU + ":", oUrl);
@@ -212,7 +212,7 @@ sap.ui.define([
 
             var oModel = this.getModel("ZSB_STANDARD_LABELS");
 
-            // CAMBIO: Igual que Erick → sin printer ni logo
+            // CAMBIO: → sin printer ni logo
             var oUrl = "/PDFStParticion(handunit='" + sFolio + "',quan1='" + sCant1 + "',quan2='" + sCant2 + "')";
 
             console.log("Llamando partición a:", oUrl);
@@ -240,7 +240,7 @@ sap.ui.define([
 
             var oModel = this.getModel("ZSB_STANDARD_LABELS");
 
-            // CAMBIO: Igual que Erick → sin printer ni logo
+            // CAMBIO: → sin printer ni logo
             var oUrl = "/PDFStUnificacion(handunit1='" + sFolio1 + "',handunit2='" + sFolio2 + "')";
 
             console.log("Llamando unificación a:", oUrl);
