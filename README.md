@@ -34,6 +34,13 @@ Cada acción genera un PDF en base64 que se abre automáticamente en una nueva p
 - **Despliegue**: Preparada para SAP BTP (Fiori Launchpad) o on-premise.
 - **Pruebas**: Mock local con JSON para desarrollo offline.
 
+<img width="1919" height="1059" alt="image" src="https://github.com/user-attachments/assets/502837d1-d7be-4f1c-9e54-f4a2348b1a16" />
+<img width="959" height="537" alt="cuprumEtiquetas5" src="https://github.com/user-attachments/assets/a8a56461-b5c5-43c7-b012-7a6b267870ab" />
+*****************************************************************************************************************************************************
+-- ** por rango 
+<img width="959" height="536" alt="etiquetas5_rango" src="https://github.com/user-attachments/assets/d42749d1-f818-44c4-9222-dbb7b3cfe583" />
+
+*****************************************************************************************************************************************************
 
 <img width="1908" height="1063" alt="image" src="https://github.com/user-attachments/assets/5c8e3d85-3e6f-41b2-9023-6aa71342f8eb" />
 <img width="1919" height="1016" alt="image" src="https://github.com/user-attachments/assets/2c4d2671-ce8f-4739-893a-46b35da26ded" />
